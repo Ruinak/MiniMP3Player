@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
 
     // 전역변수 선언
     private ListView lvMP3;
-    private Button btnPlay, btnStop;
+    private Button btnPlay, btnPause, btnStop;
     private TextView tvMP3;
     private ProgressBar pbMP3;
 
@@ -33,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     private String mp3Path = Environment.getExternalStorageDirectory().getPath() + "/";
     private MediaPlayer mediaPlayer;
 
+    // 일시정지할 경우 위치를 기억하기 위한 변수 선언
+    private int position = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
     public void init(){
         lvMP3 = findViewById(R.id.lvMP3);
         btnPlay = findViewById(R.id.btnPlay);
+        btnPause = findViewById(R.id.btnPause);
         btnStop = findViewById(R.id.btnStop);
         tvMP3 = findViewById(R.id.tvMP3);
         pbMP3 = findViewById(R.id.pbMP3);
@@ -96,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
                 mediaPlayer.prepare();
                 mediaPlayer.start();
                 btnPlay.setClickable(false);
+                btnPause.setClickable(true);
                 btnStop.setClickable(true);
                 tvMP3.setText("실행중인 음악 : " + selectedMP3);
                 pbMP3.setVisibility(View.VISIBLE);
@@ -104,11 +108,32 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // 일시정지를 클릭했을 때 동작하는 부분
+        btnPause.setOnClickListener(v -> {
+            // mediaPlayer 가 재생중일 때 작동
+            if(mediaPlayer.isPlaying()){
+                mediaPlayer.pause();
+                // 음악파일에서 현재 재생 위치 기억
+                position = mediaPlayer.getCurrentPosition();
+                btnPause.setText("이어듣기");
+                btnPause.setClickable(true);
+                btnStop.setClickable(true);
+                pbMP3.setVisibility(View.INVISIBLE);
+            } else {
+                // 기억해둔 재생위치부터 재생
+                mediaPlayer.seekTo(position);
+                mediaPlayer.start();
+                btnPause.setText("일시 정지");
+                pbMP3.setVisibility(View.VISIBLE);
+            }
+        });
+
         // 중지를 클릭했을 때 동작하는 부분
         btnStop.setOnClickListener(v -> {
             mediaPlayer.stop();
             mediaPlayer.reset();
             btnPlay.setClickable(true);
+            btnPause.setClickable(false);
             btnStop.setClickable(false);
             tvMP3.setText("실행중인 음악 : ");
             pbMP3.setVisibility(View.INVISIBLE);

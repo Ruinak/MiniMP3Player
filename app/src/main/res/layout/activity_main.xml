@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity">
+
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -14,9 +15,7 @@
         <ListView
             android:id="@+id/lvMP3"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        </ListView>
+            android:layout_height="wrap_content"/>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -31,13 +30,25 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="50"
-            android:text="듣기" />
+            android:text="듣기"
+            android:textSize="18dp"
+            android:textStyle="bold"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnPause"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="50"
+            android:text="일시 정지"
+            android:textSize="18dp"
+            android:textStyle="bold" />
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnStop"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="50"
-            android:text="중지" />
+            android:text="중지"
+            android:textSize="18dp"
+            android:textStyle="bold" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -51,9 +62,11 @@
             android:id="@+id/tvMP3"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:textSize="20dp"
             android:gravity="center"
-            android:text="실행중인 음악 : " />
+            android:text="실행중인 음악 : "
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"/>
         <ProgressBar
             android:id="@+id/pbMP3"
             android:layout_width="wrap_content"
@@ -61,8 +74,5 @@
             android:visibility="invisible" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
-
-
-
 
 </androidx.appcompat.widget.LinearLayoutCompat>
