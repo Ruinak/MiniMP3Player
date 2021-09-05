@@ -7,6 +7,7 @@ import android.Manifest;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.SystemClock;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -17,7 +18,7 @@ import android.widget.TextView;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -25,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     // 전역변수 선언
     private ListView lvMP3;
     private Button btnPlay, btnPause, btnStop;
-    private TextView tvMP3;
+    private TextView tvMP3, tvTime;
     private ProgressBar pbMP3;
 
     private ArrayList<String> mp3List;
@@ -35,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
 
     // 일시정지할 경우 위치를 기억하기 위한 변수 선언
     private int position = 0;
+
+    private SimpleDateFormat timeFormat = new SimpleDateFormat("mm:ss");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
         btnPause = findViewById(R.id.btnPause);
         btnStop = findViewById(R.id.btnStop);
         tvMP3 = findViewById(R.id.tvMP3);
+        tvTime = findViewById(R.id.tvTime);
         pbMP3 = findViewById(R.id.pbMP3);
     }
 
@@ -103,6 +107,24 @@ public class MainActivity extends AppCompatActivity {
                 btnStop.setClickable(true);
                 tvMP3.setText("실행중인 음악 : " + selectedMP3);
                 pbMP3.setVisibility(View.VISIBLE);
+                new Thread() {
+                    public void run(){
+                        if(mediaPlayer == null) {
+                            return;
+                        }
+                        pbMP3.setMax(mediaPlayer.getDuration());
+                        while (mediaPlayer.isPlaying()) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    pbMP3.setProgress(mediaPlayer.getCurrentPosition());
+                                    tvTime.setText("진행 시간 : " + timeFormat.format(mediaPlayer.getCurrentPosition()));
+                                }
+                            });
+                            SystemClock.sleep(200);
+                        }
+                    }
+                }.start();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -125,6 +147,24 @@ public class MainActivity extends AppCompatActivity {
                 mediaPlayer.start();
                 btnPause.setText("일시 정지");
                 pbMP3.setVisibility(View.VISIBLE);
+                new Thread() {
+                    public void run(){
+                        if(mediaPlayer == null) {
+                            return;
+                        }
+                        pbMP3.setMax(mediaPlayer.getDuration());
+                        while (mediaPlayer.isPlaying()) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    pbMP3.setProgress(mediaPlayer.getCurrentPosition());
+                                    tvTime.setText("진행 시간 : " + timeFormat.format(mediaPlayer.getCurrentPosition()));
+                                }
+                            });
+                            SystemClock.sleep(200);
+                        }
+                    }
+                }.start();
             }
         });
 
@@ -136,7 +176,9 @@ public class MainActivity extends AppCompatActivity {
             btnPause.setClickable(false);
             btnStop.setClickable(false);
             tvMP3.setText("실행중인 음악 : ");
+            pbMP3.setProgress(0);
             pbMP3.setVisibility(View.INVISIBLE);
+            tvTime.setText("진행시간 : ");
         });
 
         // MediaPlayer 가 시작되지 않은 상태에서 <중지>를 클릭했을 때 발생하는 오류를 방지하기 위함
